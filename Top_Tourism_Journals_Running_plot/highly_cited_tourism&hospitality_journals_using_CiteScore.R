@@ -9,6 +9,8 @@ library(tidyverse)
 library(readxl)
 
 # Load the data
+# These sets needs to be in your working directory
+
 data_2013 <- read_xlsx("Scopus Source List/2013.xlsx") %>% 
         select(`Source title`, `CiteScore`) %>%
         rename(Journal = `Source title`, CiteScore_2013 = `CiteScore`)
@@ -114,29 +116,30 @@ p <- ggplot(top_journals_filtered, aes(x = Rank, y = CiteScore, fill = Journal))
         scale_x_reverse(breaks = 1:15) +
         coord_flip() +
         scale_y_continuous(limits = c(0,40), expand = expansion(mult = c(0.05, 0.15))) +
-        labs(title = 'Highly Cited Tourism & Hospitality Journals using CiteScore: {closest_state}', 
+        labs(title = 'Top Highly Cited Tourism & Hospitality Research Journals: {closest_state}', 
              x = 'Rank', 
              y = 'CiteScore') +
         theme_minimal() +
         theme(legend.position = "none",
-              plot.title = element_text(size = 24, face = "bold"),
+              plot.title = element_text(size = 35, face = "bold"),
               axis.title.x = element_text(size = 18),
               axis.title.y = element_text(size = 18),
               axis.text.x = element_text(size = 14),
-              axis.text.y = element_text(size = 14)
+              axis.text.y = element_text(size = 14),
+              plot.margin = margin(20, 20, 20, 20)  # Add margins (top, right, bottom, left)
               ) +
-        transition_states(Year, transition_length = 4, state_length = 1) +
-        ease_aes('cubic-in-out') +
+        transition_states(Year, transition_length = 20, state_length = 5) + # Transition states
+        ease_aes('linear') +
         enter_fade() + 
         exit_fade() +
         annotate("text", x = 14, y = 40 * 0.8, label = "Data Source: CiteScore from Scopus", size = 5, hjust = 0) +
         annotate("text", x = 15, y = 40 * 0.8, label = "© Sahil Sharma", size = 5, hjust = 0) + 
         geom_label(aes(x = 8, y = 40 * 0.9, label = as.character(Year)), 
                    size = 8, color = "white", fill = "blue", fontface = "bold", alpha = 0.05, label.padding = unit(0.5, "lines"))
-p
 
 # Render the animation with larger canvas
-animate(p, nframes = 300, fps = 10, width = 1200, height = 800, renderer = gifski_renderer("top_journals_race.gif"))
+animate(p, nframes = 600, fps = 30, width = 1200, height = 800, end_pause = 10,
+        renderer = gifski_renderer("top_journals_race.gif"))
         
         
         
